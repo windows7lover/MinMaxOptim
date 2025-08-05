@@ -10,10 +10,12 @@ beta = 0.5*min([1/L_y ; sqrt(mu_x)/(L_xy*sqrt(L_y))]);
 x = x0;
 y = y0;
 
+numberGradientCall = 0;
+
 for i=1:nIter
-    x = x - alpha*gx(x,y);
-    y = y + beta*gy(x,y);
+    x = x - alpha*gx(x,y); numberGradientCall = numberGradientCall+1;
+    y = y + beta*gy(x,y); numberGradientCall = numberGradientCall+1;
     
-    optimMeter = optimMeter.store(x, y, i);
+    optimMeter = optimMeter.store(x, y, numberGradientCall);
     
 end
