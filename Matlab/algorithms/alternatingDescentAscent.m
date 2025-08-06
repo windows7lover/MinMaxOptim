@@ -12,7 +12,7 @@ y = y0;
 
 numberGradientCall = 0;
 
-for i=1:nIter
+while numberGradientCall<nIter
     x = x - alpha*gx(x,y); numberGradientCall = numberGradientCall+1;
     y = y + beta*gy(x,y); numberGradientCall = numberGradientCall+1;
     
