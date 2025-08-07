@@ -20,12 +20,14 @@ nIter = 10000;
 
 param_altGDA = [];
 param_simGDA = [];
+param_approxMinMax = [];
 
 
 % Concatenate algo for experiment
 algoCell = {...
     @(x,y,z) alternatingDescentAscent(x,y,z), param_altGDA;
     @(x,y,z) simDescentAscent(x,y,z), param_simGDA
+    @(x,y,z) approxMinMax(x,y,z), param_approxMinMax
     };
 numExp = size(algoCell,1);
 

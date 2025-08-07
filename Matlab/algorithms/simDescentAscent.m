@@ -12,7 +12,7 @@ y = y0;
 
 numberGradientCall = 0;
 
-for i=1:nIter
+while numberGradientCall<nIter
     
     gradx = gx(x,y);
     grady = gy(x,y);
