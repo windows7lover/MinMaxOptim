@@ -4,16 +4,17 @@ dim_x = 50;
 dim_y = 75;
 
 mu_x = 0.1;
-mu_y = 0.1;
+mu_y = 0.01;
 
 L_x = 10;
-L_y = 10;
+L_y = 100;
 
 L_xy = 10;
 
 
 % Generate Obj Function
 finfo = randomQuadratic(dim_x, dim_y, L_x, L_y, mu_x, mu_y, L_xy);
+loss = @(x,y) finfo.f(x,y) + norm(finfo.gx(x,y))^2/(2*finfo.mu_x)
 
 % Algo Parameter
 nIter = 10000;
@@ -56,7 +57,15 @@ end
 
 figure
 for exp=1:numExp
-    semilogy(algoResult{exp}.iterVec, algoResult{exp}.gradval_x.^2/finfo.mu_x + algoResult{exp}.gradval_y.^2/finfo.mu_y)
+    semilogy(algoResult{exp}.iterVec, algoResult{exp}.gradval_x + algoResult{exp}.gradval_y)
+    hold on
+end
+legend(labelCell)
+
+
+figure
+for exp=1:numExp
+    semilogy(algoResult{exp}.iterVec, algoResult{exp}.lossVec)
     hold on
 end
 legend(labelCell)
