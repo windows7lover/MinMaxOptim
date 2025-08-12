@@ -17,8 +17,8 @@ numberGradientCall = 0;
 
 factor_w = 0.25;
 
-hx = 0.5*1/(L_x + L_xy^2/mu_y);
-hy = 0.5*1/(L_y + L_xy^2/mu_x);
+hx = 1/(L_x + L_xy^2/mu_y);
+hy = 1/(L_y + L_xy^2/mu_x);
 
 Lyapunov = @(x,y,xstar, ystar) f(x,ystar)-f(xstar,y)+norm(gx(x,ystar))^2/mu_x+norm(gx(xstar,y))^2/mu_y;
 
@@ -26,7 +26,7 @@ Lyapunov = @(x,y,xstar, ystar) f(x,ystar)-f(xstar,y)+norm(gx(x,ystar))^2/mu_x+no
 while numberGradientCall<nIter
     
     
-    delta_w = @(xplus) f(xplus,ystar)-f(x,ystar) + (norm(gy(xplus,ystar))^2-norm(gy(x,ystar))^2)/(2*mu_y);
+    delta_w = @(xplus, ystar) f(xplus,ystar)-f(x,ystar) + (norm(gy(xplus,ystar))^2-norm(gy(x,ystar))^2)/(2*mu_y);
     xplus = x - hx*gx(x,ystar); numberGradientCall = numberGradientCall+1;
     
     loop1 = numberGradientCall;
@@ -38,7 +38,7 @@ while numberGradientCall<nIter
         ystar = ystar + gy(x,ystar)/L_y; numberGradientCall = numberGradientCall+1;
         xplus = x - hx*gx(x,ystar); numberGradientCall = numberGradientCall+1;
         
-        condition_x_satisfied = (delta_w(xplus) <= factor_w * (-0.5 * norm(gx(x,ystar))^2)*hx);
+        condition_x_satisfied = (delta_w(xplus, ystar) <= factor_w * (-0.5 * norm(gx(x,ystar))^2)*hx);
     end
     x = xplus;
     loop1 = numberGradientCall-loop1;
@@ -47,7 +47,7 @@ while numberGradientCall<nIter
 %     [loop1, norm(gx(x,ystar)), norm(gy(x,ystar)), Lyapunov(x,y,xstar, ystar)]
     
     
-    delta_v = @(yplus) -f(xstar,yplus)+f(xstar,y) + (norm(gx(xstar,yplus))^2-norm(gx(xstar,y))^2)/(2*mu_x);
+    delta_v = @(yplus, xstar) -f(xstar,yplus)+f(xstar,y) + (norm(gx(xstar,yplus))^2-norm(gx(xstar,y))^2)/(2*mu_x);
     yplus = y + hy*gy(xstar,y); numberGradientCall = numberGradientCall+1;
     
     loop2 = numberGradientCall;
@@ -56,7 +56,7 @@ while numberGradientCall<nIter
     while ~condition_y_satisfied
         xstar = xstar - gx(xstar,y)/L_x; numberGradientCall = numberGradientCall+1;
         yplus = y + hy*gy(xstar,y); numberGradientCall = numberGradientCall+1;
-        condition_y_satisfied = (delta_v(yplus) <= factor_w * (-0.5 * norm(gy(xstar,y))^2)*hy);
+        condition_y_satisfied = (delta_v(yplus, xstar) <= factor_w * (-0.5 * norm(gy(xstar,y))^2)*hy);
     end
     y = yplus;
     loop2 = numberGradientCall-loop2;
