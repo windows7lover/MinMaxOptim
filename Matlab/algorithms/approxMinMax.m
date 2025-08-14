@@ -27,12 +27,11 @@ while numberGradientCall<nIter
     
     
     delta_w = @(xplus, ystar) f(xplus,ystar)-f(x,ystar) + (norm(gy(xplus,ystar))^2-norm(gy(x,ystar))^2)/(2*mu_y);
-    xplus = x - hx*gx(x,ystar); numberGradientCall = numberGradientCall+1;
     
     loop1 = numberGradientCall;
     
+    Lyapunov(x,y,xstar, ystar)
     condition_x_satisfied = false;
-    disp('loop x')
     while ~condition_x_satisfied
         
         ystar = ystar + gy(x,ystar)/L_y; numberGradientCall = numberGradientCall+1;
@@ -41,18 +40,26 @@ while numberGradientCall<nIter
         condition_x_satisfied = (delta_w(xplus, ystar) <= factor_w * (-0.5 * norm(gx(x,ystar))^2)*hx);
     end
     x = xplus;
-    loop1 = numberGradientCall-loop1;
+    
+    
+    % We are ready to minimize w(x)
+    anchor_x = x;
+    for i=1:10
+        grad_w = gx(x,ystar)+L_xy^2*(x-anchor_x)/mu_y;
+        x = x - hx*(grad_w);%  numberGradientCall = numberGradientCall+1;
+       norm(grad_w)
+    end
+    
+%     loop1 = numberGradientCall-loop1;
     Lyapunov(x,y,xstar, ystar)
     
 %     [loop1, norm(gx(x,ystar)), norm(gy(x,ystar)), Lyapunov(x,y,xstar, ystar)]
     
     
     delta_v = @(yplus, xstar) -f(xstar,yplus)+f(xstar,y) + (norm(gx(xstar,yplus))^2-norm(gx(xstar,y))^2)/(2*mu_x);
-    yplus = y + hy*gy(xstar,y); numberGradientCall = numberGradientCall+1;
     
     loop2 = numberGradientCall;
     condition_y_satisfied = false;
-    disp('loop y')
     while ~condition_y_satisfied
         xstar = xstar - gx(xstar,y)/L_x; numberGradientCall = numberGradientCall+1;
         yplus = y + hy*gy(xstar,y); numberGradientCall = numberGradientCall+1;
@@ -61,10 +68,19 @@ while numberGradientCall<nIter
     y = yplus;
     loop2 = numberGradientCall-loop2;
     
+    
+    % We are ready to minimize v(x)
     Lyapunov(x,y,xstar, ystar)
-
-    [loop1, loop2]
-%     pause
+    anchor_y = y;
+    for i=1:10
+        grad_v = -gy(xstar,y)+L_xy^2*(y-anchor_y)/mu_x;
+        y = y - hy*(grad_v);%  numberGradientCall = numberGradientCall+1;
+       norm(grad_v)
+    end
+    
+    Lyapunov(x,y,xstar, ystar)
+%     [loop1, loop2]
+    pause
     
     optimMeter = optimMeter.store(x, y, numberGradientCall);
     

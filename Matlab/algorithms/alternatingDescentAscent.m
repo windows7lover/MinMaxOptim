@@ -7,6 +7,9 @@ optimMeter = OptimMeter(finfo, x0, y0, 'alt-GDA');
 alpha = 0.5*min([1/L_x ; sqrt(mu_y)/(L_xy*sqrt(L_x))]);
 beta = 0.5*min([1/L_y ; sqrt(mu_x)/(L_xy*sqrt(L_y))]);
 
+1/L_x
+sqrt(mu_y)/(L_xy*sqrt(L_x))
+
 x = x0;
 y = y0;
 
