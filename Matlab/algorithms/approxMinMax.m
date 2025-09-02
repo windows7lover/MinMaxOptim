@@ -4,9 +4,6 @@ function [optimMeter, x, y] = approxMinMax(finfo, nIter, param)
 
 optimMeter = OptimMeter(finfo, x0, y0, 'approxMinMax');
 
-alpha = 2/(mu_x+L_x);
-beta = 0.5*min([1/L_y ; sqrt(mu_x)/(L_xy*sqrt(L_y))]);
-
 x = x0;
 y = y0;
 
@@ -36,7 +33,6 @@ while numberGradientCall<nIter
         
         ystar = ystar + gy(x,ystar)/L_y; numberGradientCall = numberGradientCall+1;
         xplus = x - hx*gx(x,ystar); numberGradientCall = numberGradientCall+1;
-        
         condition_x_satisfied = (delta_w(xplus, ystar) <= factor_w * (-0.5 * norm(gx(x,ystar))^2)*hx);
     end
     x = xplus;
@@ -44,9 +40,9 @@ while numberGradientCall<nIter
     
     % We are ready to minimize w(x)
     anchor_x = x;
-    for i=1:10
+    for i=1:1
         grad_w = gx(x,ystar)+L_xy^2*(x-anchor_x)/mu_y;
-        x = x - hx*(grad_w);%  numberGradientCall = numberGradientCall+1;
+        x = x - hx*(grad_w);  numberGradientCall = numberGradientCall+1;
        norm(grad_w)
     end
     
@@ -72,15 +68,15 @@ while numberGradientCall<nIter
     % We are ready to minimize v(x)
     Lyapunov(x,y,xstar, ystar)
     anchor_y = y;
-    for i=1:10
+    for i=1:1
         grad_v = -gy(xstar,y)+L_xy^2*(y-anchor_y)/mu_x;
-        y = y - hy*(grad_v);%  numberGradientCall = numberGradientCall+1;
+        y = y - hy*(grad_v);  numberGradientCall = numberGradientCall+1;
        norm(grad_v)
     end
     
     Lyapunov(x,y,xstar, ystar)
 %     [loop1, loop2]
-    pause
+    % pause
     
     optimMeter = optimMeter.store(x, y, numberGradientCall);
     

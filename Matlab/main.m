@@ -36,6 +36,7 @@ finalIterate = cell(numExp,2);
 
 % Run the experiment
 for exp=1:numExp
+    exp
     [algoResult{exp}, finalIterate{exp,1}, finalIterate{exp,2}] = algoCell{exp,1}(finfo, nIter, algoCell{exp,2});
 end
 
